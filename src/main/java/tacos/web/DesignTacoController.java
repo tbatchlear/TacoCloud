@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -18,12 +19,16 @@ import tacos.Ingredient;
 import tacos.Ingredient.Type;
 import tacos.Taco;
 import tacos.TacoOrder;
+import tacos.validator.ValidationFactory;
 
 @Slf4j
 @Controller
 @RequestMapping("/design")
 @SessionAttributes("tacoOrder")
 public class DesignTacoController {
+
+  @Autowired
+  ValidationFactory validator;
 
   @ModelAttribute
   public void addIngredientsToModel(Model model) {
@@ -54,7 +59,7 @@ public class DesignTacoController {
   public String processTaco(
     Taco taco, Errors errors,
     @ModelAttribute TacoOrder tacoOrder) {
-
+    validator.validate(taco);
     if (errors.hasErrors()) {
       return "design";
     }
